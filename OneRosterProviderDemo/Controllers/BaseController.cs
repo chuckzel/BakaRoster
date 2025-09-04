@@ -14,6 +14,7 @@ using System.Linq;
 
 namespace OneRosterProviderDemo.Controllers
 {
+    [ApiController]
     [Route("ims/oneroster/v1p1")]
     public class BaseController : Controller
     {
@@ -93,22 +94,22 @@ namespace OneRosterProviderDemo.Controllers
             return serializer.Finish();
         }
 
-        public BaseController(ApiContext _db)
+        protected BaseController(ApiContext _db)
         {
             db = _db;
         }
 
-        public IActionResult JsonOk(string json)
+        protected IActionResult JsonOk(string json)
         {
             return JsonOk(json, null);
         }
 
-        public IActionResult JsonOk(string json, int? count)
+        protected IActionResult JsonOk(string json, int? count)
         {
             return JsonWithStatus(json, count, 200);
         }
 
-        public IActionResult JsonWithStatus(string json, int? count, int status)
+        protected IActionResult JsonWithStatus(string json, int? count, int status)
         {
             if (exceptions.Any(e => e.GetType() == typeof(InvalidFilterFieldException)))
             {
@@ -124,7 +125,7 @@ namespace OneRosterProviderDemo.Controllers
             };
         }
 
-        public IActionResult ErrorResult()
+        protected IActionResult ErrorResult()
         {
             serializer = new OneRosterSerializer("statusInfoSet");
             SerializeExceptions();

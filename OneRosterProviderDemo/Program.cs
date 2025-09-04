@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using OneRosterProviderDemo;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,7 @@ builder.Services.AddAuthentication(sharedOptions =>
     builder.Configuration.GetSection("AzureAd").Bind(opts);
     opts.SaveTokens = true;
 });
+builder.Services.AddOpenApi();
 
 OneRosterProviderDemo.Vocabulary.SubjectCodes.Initialize();
 
@@ -34,17 +36,22 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseDeveloperExceptionPage();
+    Console.WriteLine("In Development");
+    //app.UseDeveloperExceptionPage();
+    app.MapOpenApi();
+    app.MapScalarApiReference();
 }
+Console.WriteLine("bla");
 
-app.UseStaticFiles();
+app.UseHttpsRedirection();
+//app.UseStaticFiles();
 app.UseAuthentication();
-app.UseOauthMessageSigning();
+//app.UseOauthMessageSigning();
 app.UseRouting();
 app.UseAuthorization();
-app.MapControllerRoute(
+/*app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}"
-);
-
+);*/
+app.MapControllers();
 app.Run();
