@@ -3,21 +3,48 @@
 * See LICENSE in the project root for license information.
 */
 
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
+using OneRosterProviderDemo.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using OneRosterProviderDemo;
 
-namespace OneRosterProviderDemo
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddControllersWithViews();
+builder.Services.AddDbContext<ApiContext>(
+    options => options.UseSqlite(builder.Configuration.GetConnectionString("OneRosterProviderDemoEF"))
+);
+builder.Services.AddAuthentication(sharedOptions =>
 {
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            BuildWebHost(args).Run();
-        }
+    sharedOptions.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    sharedOptions.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+    sharedOptions.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+})
+.AddCookie()
+.AddOpenIdConnect(opts =>
+{
+    builder.Configuration.GetSection("AzureAd").Bind(opts);
+    opts.SaveTokens = true;
+});
 
-        public static IWebHost BuildWebHost(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
-                .Build();
-    }
+OneRosterProviderDemo.Vocabulary.SubjectCodes.Initialize();
+
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
 }
+
+app.UseStaticFiles();
+app.UseAuthentication();
+app.UseOauthMessageSigning();
+app.UseRouting();
+app.UseAuthorization();
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}"
+);
+
+app.Run();
