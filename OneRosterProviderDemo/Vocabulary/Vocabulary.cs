@@ -35,14 +35,16 @@ namespace OneRosterProviderDemo.Vocabulary
             SubjectMap = new Dictionary<string, string>();
 
             using (StreamReader sr = new StreamReader("Vocabulary/sced-v4.csv"))
+            using (var csv = new CsvHelper.CsvReader(sr, new CsvHelper.Configuration.CsvConfiguration(System.Globalization.CultureInfo.InvariantCulture)))
             {
-                var csv = new CsvReader(sr);
-                
-                while( csv.Read() )
+                while (csv.Read())
                 {
                     var code = csv.GetField<string>(0);
                     var title = csv.GetField<string>(1);
-                    SubjectMap.Add(code, title);
+                    if (!string.IsNullOrEmpty(code) && !string.IsNullOrEmpty(title))
+                    {
+                        SubjectMap.Add(code, title);
+                    }
                 }
             }
         }

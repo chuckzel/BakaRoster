@@ -21,9 +21,11 @@ namespace OneRosterProviderDemo.Serializers
     public class CsvSerializer
     {
         private ApiContext db;
+        private readonly CsvHelper.Configuration.CsvConfiguration csvConfig;
         public CsvSerializer(ApiContext db)
         {
             this.db = db;
+            csvConfig = new CsvHelper.Configuration.CsvConfiguration(System.Globalization.CultureInfo.InvariantCulture);
         }
 
         public void Serialize(Stream outStream)
@@ -78,7 +80,8 @@ namespace OneRosterProviderDemo.Serializers
         private string Manifest()
         {
             var sb = new StringBuilder();
-            using (var csv = new CsvWriter(new StringWriter(sb)))
+            using (var writer = new StringWriter(sb))
+            using (var csv = new CsvWriter(writer, csvConfig))
             {
                 foreach (var manifestPair in manifestValues)
                 {
@@ -95,15 +98,16 @@ namespace OneRosterProviderDemo.Serializers
             var sessions = db.AcademicSessions;
 
             var sb = new StringBuilder();
-            using (var csv = new CsvWriter(new StringWriter(sb)))
+            using (var writer = new StringWriter(sb))
+            using (var csv = new CsvWriter(writer, csvConfig))
             {
                 AcademicSession.CsvHeader(csv);
                 foreach (var session in sessions)
                 {
                     session.AsCsvRow(csv);
                 }
-                return sb.ToString();
             }
+            return sb.ToString();
         }
 
         private string Orgs()
@@ -113,15 +117,16 @@ namespace OneRosterProviderDemo.Serializers
                 .Include(o => o.Children);
 
             var sb = new StringBuilder();
-            using (var csv = new CsvWriter(new StringWriter(sb)))
+            using (var writer = new StringWriter(sb))
+            using (var csv = new CsvWriter(writer, csvConfig))
             {
                 Org.CsvHeader(csv);
                 foreach (var org in orgs)
                 {
                     org.AsCsvRow(csv);
                 }
-                return sb.ToString();
             }
+            return sb.ToString();
         }
 
         private string Courses()
@@ -131,15 +136,16 @@ namespace OneRosterProviderDemo.Serializers
                 .Include(c => c.Org);
 
             var sb = new StringBuilder();
-            using (var csv = new CsvWriter(new StringWriter(sb)))
+            using (var writer = new StringWriter(sb))
+            using (var csv = new CsvWriter(writer, csvConfig))
             {
                 Course.CsvHeader(csv);
                 foreach (var course in courses)
                 {
                     course.AsCsvRow(csv);
                 }
-                return sb.ToString();
             }
+            return sb.ToString();
         }
 
         private string IMSClasses()
@@ -151,15 +157,16 @@ namespace OneRosterProviderDemo.Serializers
                 .Include(k => k.School);
 
             var sb = new StringBuilder();
-            using (var csv = new CsvWriter(new StringWriter(sb)))
+            using (var writer = new StringWriter(sb))
+            using (var csv = new CsvWriter(writer, csvConfig))
             {
                 IMSClass.CsvHeader(csv);
                 foreach (var imsClass in imsClasses)
                 {
                     imsClass.AsCsvRow(csv);
                 }
-                return sb.ToString();
             }
+            return sb.ToString();
         }
 
         private string Users()
@@ -171,15 +178,16 @@ namespace OneRosterProviderDemo.Serializers
                     .ThenInclude(ua => ua.Agent);
 
             var sb = new StringBuilder();
-            using (var csv = new CsvWriter(new StringWriter(sb)))
+            using (var writer = new StringWriter(sb))
+            using (var csv = new CsvWriter(writer, csvConfig))
             {
                 User.CsvHeader(csv);
                 foreach (var user in users)
                 {
                     user.AsCsvRow(csv);
                 }
-                return sb.ToString();
             }
+            return sb.ToString();
         }
 
         private string Enrollments()
@@ -190,15 +198,16 @@ namespace OneRosterProviderDemo.Serializers
                 .Include(e => e.School);
 
             var sb = new StringBuilder();
-            using (var csv = new CsvWriter(new StringWriter(sb)))
+            using (var writer = new StringWriter(sb))
+            using (var csv = new CsvWriter(writer, csvConfig))
             {
                 Enrollment.CsvHeader(csv);
                 foreach (var enrollment in enrollments)
                 {
                     enrollment.AsCsvRow(csv);
                 }
-                return sb.ToString();
             }
+            return sb.ToString();
         }
 
         private string Categories()
@@ -206,15 +215,16 @@ namespace OneRosterProviderDemo.Serializers
             var categories = db.LineItemCategories;
 
             var sb = new StringBuilder();
-            using (var csv = new CsvWriter(new StringWriter(sb)))
+            using (var writer = new StringWriter(sb))
+            using (var csv = new CsvWriter(writer, csvConfig))
             {
                 LineItemCategory.CsvHeader(csv);
                 foreach (var category in categories)
                 {
                     category.AsCsvRow(csv);
                 }
-                return sb.ToString();
             }
+            return sb.ToString();
         }
 
         private string LineItems()
@@ -222,15 +232,16 @@ namespace OneRosterProviderDemo.Serializers
             var lineItems = db.LineItems;
 
             var sb = new StringBuilder();
-            using (var csv = new CsvWriter(new StringWriter(sb)))
+            using (var writer = new StringWriter(sb))
+            using (var csv = new CsvWriter(writer, csvConfig))
             {
                 LineItem.CsvHeader(csv);
                 foreach (var lineItem in lineItems)
                 {
                     lineItem.AsCsvRow(csv);
                 }
-                return sb.ToString();
             }
+            return sb.ToString();
         }
 
         private string Results()
@@ -238,15 +249,16 @@ namespace OneRosterProviderDemo.Serializers
             var results = db.Results;
 
             var sb = new StringBuilder();
-            using (var csv = new CsvWriter(new StringWriter(sb)))
+            using (var writer = new StringWriter(sb))
+            using (var csv = new CsvWriter(writer, csvConfig))
             {
                 Result.CsvHeader(csv);
                 foreach (var result in results)
                 {
                     result.AsCsvRow(csv);
                 }
-                return sb.ToString();
             }
+            return sb.ToString();
         }
     }
 }

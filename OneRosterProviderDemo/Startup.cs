@@ -2,6 +2,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT license.
 * See LICENSE in the project root for license information.
 */
+using Microsoft.EntityFrameworkCore.SqlServer;
 
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -13,7 +14,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using OneRosterProviderDemo.Models;
 using System;
 
@@ -46,14 +46,13 @@ namespace OneRosterProviderDemo
                 opts.SaveTokens = true;
             });
             services.AddDbContext<ApiContext>(
-                //options => options.UseSqlite(Configuration.GetConnectionString("OneRosterProviderDemoEF"))
-                options => options.UseSqlServer(Configuration.GetConnectionString("OneRosterProviderDemoEF"))
+                options => options.UseSqlite(Configuration.GetConnectionString("OneRosterProviderDemoEF"))
             );
-            services.AddMvc();
+            services.AddControllersWithViews();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -63,7 +62,14 @@ namespace OneRosterProviderDemo
             app.UseStaticFiles();
             app.UseAuthentication();
             app.UseOauthMessageSigning();
-            app.UseMvc();
+            app.UseRouting();
+            app.UseAuthorization();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+            });
         }
     }
 }

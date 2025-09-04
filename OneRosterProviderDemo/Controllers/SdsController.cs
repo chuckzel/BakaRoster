@@ -17,7 +17,7 @@ using System;
 using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
-using Microsoft.WindowsAzure.Storage.Blob;
+// using Microsoft.WindowsAzure.Storage.Blob;
 using Sds;
 
 namespace OneRosterProviderDemo.Controllers
@@ -129,13 +129,15 @@ namespace OneRosterProviderDemo.Controllers
 
         private async Task UploadToUrl(List<IFormFile> files, string sas)
         {
+            throw new NotImplementedException();
+            /*
             CloudBlobContainer container = new CloudBlobContainer(new Uri(sas));
 
             foreach (var file in files)
             {
                 var fileBlob = container.GetBlockBlobReference(file.FileName);
                 await fileBlob.UploadFromStreamAsync(file.OpenReadStream());
-            }
+            }*/
         }
 
         private async Task StartCsvSyncSafely(string profileId)
