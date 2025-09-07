@@ -28,31 +28,27 @@ namespace OneRosterProviderDemo.Serializers
             csvConfig = new CsvHelper.Configuration.CsvConfiguration(System.Globalization.CultureInfo.InvariantCulture);
         }
 
-        public void Serialize(Stream outStream)
+        public async Task Serialize(Stream outStream)
         {
-            using (var archive = new ZipArchive(outStream, ZipArchiveMode.Create))
-            {
-                WriteFileEntry(archive, "manifest.csv", Manifest());
-                WriteFileEntry(archive, "academicSessions.csv", AcademicSessions());
-                WriteFileEntry(archive, "categories.csv", Categories());
-                WriteFileEntry(archive, "classes.csv", IMSClasses());
-                WriteFileEntry(archive, "courses.csv", Courses());
-                WriteFileEntry(archive, "enrollments.csv", Enrollments());
-                WriteFileEntry(archive, "lineItems.csv", LineItems());
-                WriteFileEntry(archive, "orgs.csv", Orgs());
-                WriteFileEntry(archive, "results.csv", Results());
-                WriteFileEntry(archive, "users.csv", Users());
-            }
+            using var archive = new ZipArchive(outStream, ZipArchiveMode.Create);
+            await WriteFileEntry(archive, "manifest.csv", Manifest());
+            await WriteFileEntry(archive, "academicSessions.csv", AcademicSessions());
+            await WriteFileEntry(archive, "categories.csv", Categories());
+            await WriteFileEntry(archive, "classes.csv", IMSClasses());
+            await WriteFileEntry(archive, "courses.csv", Courses());
+            await WriteFileEntry(archive, "enrollments.csv", Enrollments());
+            await WriteFileEntry(archive, "lineItems.csv", LineItems());
+            await WriteFileEntry(archive, "orgs.csv", Orgs());
+            await WriteFileEntry(archive, "results.csv", Results());
+            await WriteFileEntry(archive, "users.csv", Users());
         }
 
-        private void WriteFileEntry(ZipArchive archive, string entryName, string entryValue)
+        private async Task WriteFileEntry(ZipArchive archive, string entryName, string entryValue)
         {
             var entry = archive.CreateEntry(entryName);
-            using (var entryStream = entry.Open())
-            using (var streamWriter = new StreamWriter(entryStream))
-            {
-                streamWriter.Write(entryValue);
-            }
+            await using var entryStream = entry.Open();
+            await using var streamWriter = new StreamWriter(entryStream);
+            await streamWriter.WriteAsync(entryValue);
         }
 
         // https://www.imsglobal.org/oneroster-v11-final-csv-tables#_Toc480293253

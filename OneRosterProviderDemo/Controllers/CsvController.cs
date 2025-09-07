@@ -13,6 +13,7 @@ using OneRosterProviderDemo.Models;
 
 namespace OneRosterProviderDemo.Controllers
 {
+    [ApiController]
     public class CsvController : Controller
     {
         private ApiContext db;
@@ -20,13 +21,14 @@ namespace OneRosterProviderDemo.Controllers
         {
             db = _db;
         }
+        [HttpGet]
         [Route("csv/bulk")]
-        public void Bulk()
+        public async Task Bulk()
         {
             Response.ContentType = "binary/octet-stream";
-            Response.Headers["Content-Disposition"] = "attachment; filename=oneroster.zip";
+            Response.Headers.ContentDisposition = "attachment; filename=oneroster.zip";
             var serializer = new CsvSerializer(db);
-            serializer.Serialize(Response.Body);
+            await serializer.Serialize(Response.BodyWriter.AsStream());
         }
     }
 }
