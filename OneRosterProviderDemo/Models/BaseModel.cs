@@ -45,6 +45,7 @@ namespace OneRosterProviderDemo.Models
             DateTime time = DateTime.Now;
             CreatedAt = time;
             UpdatedAt = time;
+            Status = StatusType.active;
         }
 
         public void AsJsonReference(JsonWriter jw, string baseUrl)

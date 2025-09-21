@@ -22,12 +22,12 @@ builder.Services.AddAuthentication(sharedOptions =>
     sharedOptions.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
     sharedOptions.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 })
-.AddCookie()
-.AddOpenIdConnect(opts =>
+.AddCookie();
+/*.AddOpenIdConnect(opts =>
 {
     builder.Configuration.GetSection("AzureAd").Bind(opts);
     opts.SaveTokens = true;
-});
+});*/
 builder.Services.AddOpenApi();
 
 OneRosterProviderDemo.Vocabulary.SubjectCodes.Initialize();
